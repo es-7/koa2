@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #container{
+            display: grid;
+            grid-template-columns: 100px 100px 100px 100px;
+            grid-template-rows: 100px 100px 100px 100px;
+        }
+
+        .item {
+            font-size: 4em;
+            text-align: center;
+            border: 1px solid #e5e4e9;
+        }
+
+        .middle {
+            font-size: 4em;
+            text-align: center;
+            border: 1px solid #e5e4e9;
+            background-color: #ef342a;
+            grid-column-start: 2;
+            grid-column-end: 4;
+            grid-row-start: 2;
+            grid-row-end: 4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+        }
+
+        .item-1 {
+            background-color: #f68f26;
+        }
+
+        .item-2 {
+            background-color: #4ba946;
+        }
+
+        .item-3 {
+            background-color: #0376c2;
+        }
+
+        .item-4 {
+            background-color: #c077af;
+        }
+
+        .item-5 {
+            background-color: #f8d29d;
+            grid-column-start: 4;
+            grid-column-end: 4;
+            grid-row-start: 2;
+            grid-row-end: 3;
+        }
+
+        .item-6 {
+            grid-column-start: 4;
+            grid-column-end: 4;
+            grid-row-start: 3;
+            grid-row-end: 4;
+            background-color: #b5a87f;
+        }
+
+        .item-7 {
+            grid-column-start: 4;
+            grid-column-end: 4;
+            grid-row-start: 4;
+            grid-row-end: 4;
+            background-color: #d0e4a9;
+        }
+
+        .item-8 {
+            grid-column-start: 3;
+            grid-column-end: 3;
+            grid-row-start: 4;
+            grid-row-end: 4;
+            background-color: #4dc7ec;
+        }
+        .item-9 {
+            grid-column-start: 2;
+            grid-column-end: 2;
+            grid-row-start: 4;
+            grid-row-end: 4;
+            background-color: #c077af;
+        }
+        .item-10 {
+            grid-column-start: 1;
+            grid-column-end: 1;
+            grid-row-start: 4;
+            grid-row-end: 4;
+            background-color: #f68f26;
+        }
+        .item-11 {
+            grid-column-start: 1;
+            grid-column-end: 1;
+            grid-row-start: 3;
+            grid-row-end: 3;
+            background-color: #f8d29d;
+        }
+        .item-12 {
+            grid-column-start: 1;
+            grid-column-end: 1;
+            grid-row-start: 2;
+            grid-row-end: 2;
+            background-color: #b5a87f;
+        }
+        .active{
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <div class="middle">摇奖活动</div>
+    <div class="item item-1">1</div>
+    <div class="item item-2">2</div>
+    <div class="item item-3">3</div>
+    <div class="item item-4">4</div>
+    <div class="item item-5">5</div>
+    <div class="item item-6">6</div>
+    <div class="item item-7">7</div>
+    <div class="item item-8">8</div>
+    <div class="item item-9">9</div>
+    <div class="item item-10">10</div>
+    <div class="item item-11">11</div>
+    <div class="item item-12">12</div>
+</div>
+<script>
+    let total = 0
+    let speed = 30
+    let priceIndex = 12
+    const go = () => {
+        const startIndex = total%12
+        const array = document.querySelectorAll('.item')
+        array.forEach((v,i) => {
+            if(i === startIndex){
+                v.classList.add('active')
+            }else{
+                v.classList.remove('active')
+            }
+        })
+       total ++;
+       return startIndex
+    }
+   const start = (fn) => {
+        setTimeout(()=>{
+            const result = fn()
+            if(result == (priceIndex - 1) && speed >= 300)
+                return
+            start(fn)
+        },speed)
+   }
+    const success = () => {
+        speed += 10
+    }
+    start(go)
+    setTimeout(()=>{
+        start(success)
+    },2000)
+</script>
+</body>
+</html>

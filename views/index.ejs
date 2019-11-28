@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .phone{
+            margin: 30px;
+        }
+        .group{
+            margin: 30px;
+        }
+        .btn{
+            width:100px;
+            height:30px;
+            margin-left: 30px;
+            border-radius: 15px;
+            background: #d0e4a9;
+        }
+        .p1,.p2{
+            color:red;
+            font-size: 12px;
+            margin-left: 15px;
+            margin-top: 30px;
+            margin-bottom: 50px;
+        }
+        .cid{
+            margin-bottom: 50px;
+        }
+        .p3{
+            color:green;
+            font-size: 12px;
+            margin-left: 15px;
+            margin-top: 30px;
+            margin-bottom: 50px;
+        }
+    </style>
+</head>
+<body>
+<h2>注销会员卡</h2>
+<div class="phone">手机号:    <input placeholder="请输入手机号" id="phone"></div>
+<div class="group">集团号:    <input placeholder="请设置默认集团" id="groupID"></div>
+<button id="del" class="btn">注销会员</button>
+<button id="recharge" class="btn">一键充值</button>
+<pre class="p1">
+    注销会员前请先设置好默认手机号 和 默认集团号;
+    设置成功后会永久保存;
+    设置过后注销默认会员卡;
+    默认值可以修改,修改后自动保存
+    <strong>冲突优先权重:☆</strong>
+</pre>
+<pre class="p3">
+    一键充值:
+    直接充爆你的数据库,达到人生巅峰
+    <strong>冲突优先权重:☆</strong>
+</pre>
+
+
+<div class="cid"> 用户ID: <input placeholder="请输入customerID" id="cid"></div>
+<pre class="p2">
+    支持特殊的删除方式;
+    当你不清楚数据关系的时候最好不要写填写这个信息;
+    直接输入用户customerID来清除用户的所有的卡(用于解决用户默认领卡 实际无用户手机号的情况);
+    这个数据每次删除后都会变动,所以需要每次都输入
+    <strong>冲突优先权重:☆☆</strong>
+</pre>
+
+
+<div class="cardno"> 用户卡号: <input placeholder="请输入卡号" id="cardno"></div>
+<pre class="p2">
+    支持特殊的删除方式;
+    当你不清楚数据关系的时候最好不要写填写这个信息;
+    输入卡号是通过卡号反查出来人 然后注销掉会员人及所有会员卡;
+    这个数据每次删除后都会变动,所以需要每次都输入
+    <strong>冲突优先权重:☆☆☆</strong>
+</pre>
+
+<script src="http://lib.sinaapp.com/js/jquery/2.0.2/jquery-2.0.2.min.js"></script>
+<script src="/storage.js"></script>
+<script>
+    $(()=>{
+        $('#phone').val(ls.get('phone'))
+        $('#groupID').val(ls.get('groupID'))
+       $('#del').click(()=>{
+            const phone = $('#phone').val() || ls.get('phone')
+            const groupID = $('#groupID').val() || ls.get('groupID')
+            const cid = $('#cid').val()
+            const cardno = $('#cardno').val()
+            ls.set('phone',phone)
+            ls.set('groupID',groupID)
+            if(!/^\d+$/.test(phone)) return alert('非法的手机号')
+            $.ajax({
+                url:`/user?phone=${phone}&groupID=${groupID}&cid=${cid}&cardno=${cardno}`,
+                dataType:'json',
+                success:(data)=>{
+                    notifyMe(data.data)
+                    $('#cid').val('')
+                    $('#cardno').val('')
+                },
+                error: data => {
+                    notifyMe(data.responseJSON.data)
+                }
+            })
+        })
+        $('#recharge').click(()=>{
+            const phone = $('#phone').val() || ls.get('phone')
+            const groupID = $('#groupID').val() || ls.get('groupID')
+            ls.set('phone',phone)
+            ls.set('groupID',groupID)
+            if(!/^\d+$/.test(phone)) return alert('非法的手机号')
+            $.ajax({
+                url:`/recharge?phone=${phone}&groupID=${groupID}`,
+                dataType:'json',
+                success:(data)=>{
+                    notifyMe(data.data)
+                },
+                error: data => {
+                    notifyMe(data.responseJSON.data)
+                }
+            })
+        })
+    })
+    function notifyMe(msg) {
+        // 首先讓我們確定瀏覽器支援 Notification
+        if (!("Notification" in window)) {
+            alert("這個瀏覽器不支援 Notification");
+        }
+
+        // 再檢查使用者是否已經授權執行 Notification
+        else if (Notification.permission === "granted") {
+            // 如果已經授權就可以直接新增 Notification 了!
+            var notification = new Notification(msg);
+        }
+
+        // 否則，我們會需要詢問使用者是否開放權限
+        else if (Notification.permission !== 'denied') {
+            Notification.requestPermission(function (permission) {
+                // 如果使用者同意了就來新增一個 Notification 打聲招呼吧
+                if (permission === "granted") {
+                    var notification = new Notification(msg);
+                }
+            });
+        }else{
+            alert(msg)
+        }
+    }
+</script>
+</body>
+</html>
